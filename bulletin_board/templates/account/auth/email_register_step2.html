@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Подтверждение Email - MMORPG Форум{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <i class="fas fa-key fa-3x mb-3"></i>
+                    <h1 class="h3 mb-0">Подтверждение Email</h1>
+                    <p class="mb-0 opacity-75">Код отправлен на {{ email }}</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Мы отправили 6-значный код на ваш email.
+                        Код действителен 10 минут.
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="token" class="form-label fw-bold">
+                                6-значный код
+                            </label>
+                            <input type="text" name="token" id="token" 
+                                   class="form-control text-center" 
+                                   style="font-size: 24px; letter-spacing: 10px;"
+                                   maxlength="6" minlength="6" 
+                                   placeholder="000000" required
+                                   autofocus>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Подтвердить
+                            </button>
+
+                            <button type="submit" name="resend_code" 
+                                    class="btn btn-outline-secondary">
+                                <i class="fas fa-redo me-2"></i>Отправить код повторно
+                            </button>
+
+                            <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Изменить email
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('token').addEventListener('input', function() {
+        if (this.value.length === 6) {
+            this.form.submit();
+        }
+    });
+</script>
+{% endblock %}

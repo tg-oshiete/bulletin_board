@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Объявление создано</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #4a6fa5; color: white; padding: 20px; text-align: center; }
+        .content { background-color: #f9f9f9; padding: 20px; border-radius: 5px; }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4a6fa5;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+        .ad-details { background-color: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 5px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Объявление успешно создано!</h1>
+        </div>
+
+        <div class="content">
+            <p>Здравствуйте, {{ author.username }}!</p>
+
+            <div class="ad-details">
+                <h3>{{ ad.title }}</h3>
+                <p><strong>Категория:</strong> {{ ad.category.name }}</p>
+                <p><strong>Дата создания:</strong> {{ ad.created|date:"d.m.Y H:i" }}</p>
+
+                {% if ad.content|length > 200 %}
+                    <p><strong>Описание:</strong> {{ ad.content|slice:":200" }}...</p>
+                {% else %}
+                    <p><strong>Описание:</strong> {{ ad.content }}</p>
+                {% endif %}
+            </div>
+
+            <p>Просмотреть ваше объявление:</p>
+            <a href="{{ site_url }}/bulletin-board/{{ ad.id }}/" class="button">Перейти к объявлению</a>
+
+            <p>Управлять откликами можно в личном кабинете:</p>
+            <a href="{{ site_url }}/bulletin-board/responses/" class="button">Личный кабинет</a>
+
+            <p style="margin-top: 20px; padding: 10px; background-color: #e8f4fd; border-radius: 5px;">
+                <strong>Совет:</strong> Регулярно проверяйте отклики на ваши объявления и своевременно отвечайте пользователям.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Это автоматическое сообщение от {{ site_name }}.</p>
+        </div>
+    </div>
+</body>
+</html>

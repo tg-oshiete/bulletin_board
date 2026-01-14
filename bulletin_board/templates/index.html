@@ -1,0 +1,520 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - MMORPG Форум{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-5 mb-5 bg-dark text-white rounded"
+     style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+             url('https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?q=80&w=2070') center/cover;">
+    <div class="container">
+        <h1 class="display-4 mb-3 fw-bold">
+            <i class="fas fa-dragon me-2"></i>Добро пожаловать на MMORPG Форум
+        </h1>
+        <p class="lead fs-4 mb-4">Найдите команду, продайте предметы или присоединитесь к гильдии!</p>
+
+        {% if not user.is_authenticated %}
+        <div class="mt-4">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3 px-4 py-2">
+                <i class="fas fa-user-plus me-2"></i> Присоединиться
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4 py-2">
+                <i class="fas fa-sign-in-alt me-2"></i> Войти
+            </a>
+        </div>
+        {% else %}
+        <div class="mt-4">
+            <a href="{% url 'ad_create' %}" class="btn btn-success btn-lg me-3 px-4 py-2">
+                <i class="fas fa-plus-circle me-2"></i> Создать объявление
+            </a>
+            <a href="{% url 'ad_list' %}" class="btn btn-outline-light btn-lg px-4 py-2">
+                <i class="fas fa-search me-2"></i> Найти команду
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <p class="text-light opacity-75 mb-3">Уже с нами:</p>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="avatar-group me-3">
+                            <img src="https://i.pravatar.cc/40?img=1" class="rounded-circle border border-2 border-primary" alt="...">
+                            <img src="https://i.pravatar.cc/40?img=2" class="rounded-circle border border-2 border-success" alt="...">
+                            <img src="https://i.pravatar.cc/40?img=3" class="rounded-circle border border-2 border-warning" alt="...">
+                            <img src="https://i.pravatar.cc/40?img=4" class="rounded-circle border border-2 border-info" alt="...">
+                            <span class="avatar-count ms-2">+1,200 игроков</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card border-0 shadow-sm h-100 hover-lift">
+                <div class="card-body text-center p-4">
+                    <div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold mb-2" id="user-count">{{ user_count|default:"1,247" }}</h3>
+                    <p class="text-muted mb-0">Игроков в сообществе</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card border-0 shadow-sm h-100 hover-lift">
+                <div class="card-body text-center p-4">
+                    <div class="icon-wrapper bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                        <i class="fas fa-bullhorn fa-2x text-success"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold mb-2" id="ad-count">{{ ad_count|default:"89" }}</h3>
+                    <p class="text-muted mb-0">Активных объявлений</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card border-0 shadow-sm h-100 hover-lift">
+                <div class="card-body text-center p-4">
+                    <div class="icon-wrapper bg-warning bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                        <i class="fas fa-comments fa-2x text-warning"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold mb-2" id="response-count">{{ response_count|default:"156" }}</h3>
+                    <p class="text-muted mb-0">Откликов за сегодня</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">
+                <i class="fas fa-fire text-danger me-2"></i>Свежие объявления
+            </h2>
+            <a href="{% url 'ad_list' %}" class="btn btn-outline-primary">
+                <i class="fas fa-list me-1"></i>Все объявления
+            </a>
+        </div>
+
+        <div class="row">
+            {% if latest_ads %}
+                {% for ad in latest_ads|slice:":6" %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm hover-lift border-0">
+                        <!-- Изображение -->
+                        <div class="card-img-wrapper" style="height: 180px; overflow: hidden;">
+                            {% if ad.image %}
+                            <img src="{{ ad.image.url }}"
+                                 class="card-img-top h-100"
+                                 alt="{{ ad.title }}"
+                                 style="object-fit: cover; transition: transform 0.3s;">
+                            {% else %}
+                            <div class="bg-secondary h-100 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-image fa-3x text-light opacity-25"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Категория -->
+                        <div class="card-header bg-transparent border-bottom-0 pb-0">
+                            <span class="badge
+                                {% if ad.category.name == 'Танки' %}bg-primary
+                                {% elif ad.category.name == 'Хилы' %}bg-success
+                                {% elif ad.category.name == 'ДД' %}bg-danger
+                                {% elif ad.category.name == 'Торговцы' %}bg-warning text-dark
+                                {% elif ad.category.name == 'Гилдмастеры' %}bg-info
+                                {% elif ad.category.name == 'Квестгиверы' %}bg-dark
+                                {% elif ad.category.name == 'Кузнецы' %}bg-secondary
+                                {% elif ad.category.name == 'Кожевники' %}bg-primary
+                                {% elif ad.category.name == 'Зельевары' %}bg-success
+                                {% elif ad.category.name == 'Мастера заклинаний' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ ad.category.name }}
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'ad_detail' ad.pk %}" class="text-decoration-none text-dark stretched-link">
+                                    {{ ad.title|truncatechars:50 }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted small">
+                                {{ ad.content|striptags|truncatechars:100 }}
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-top-0 pt-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if ad.author.profile.avatar %}
+                                    <img src="{{ ad.author.profile.avatar.url }}"
+                                         class="rounded-circle me-2"
+                                         width="24" height="24"
+                                         style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2"
+                                         style="width: 24px; height: 24px;">
+                                        <span class="text-white small">
+                                            {{ ad.author.username|first|upper }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">{{ ad.author.username }}</small>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ ad.created|date:"d.m.Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-bullhorn fa-4x text-muted mb-3 opacity-25"></i>
+                        <h4 class="text-muted">Пока нет объявлений</h4>
+                        <p class="text-muted mb-4">Будьте первым, кто создаст объявление!</p>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'ad_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle me-2"></i>Создать первое объявление
+                        </a>
+                        {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Присоединиться и создать
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <h2 class="fw-bold mb-4">
+            <i class="fas fa-tags text-primary me-2"></i>Популярные категории
+        </h2>
+        <div class="row g-3">
+            {% for category in categories %}
+            <div class="col-md-3 col-6">
+                <a href="{% url 'ad_list' %}?category={{ category.name }}"
+                   class="category-card text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm hover-lift text-center p-3">
+                        <div class="icon-wrapper rounded-circle d-inline-flex p-3 mb-3
+                            {% if category.name == 'Танки' %}bg-primary bg-opacity-10
+                            {% elif category.name == 'Хилы' %}bg-success bg-opacity-10
+                            {% elif category.name == 'ДД' %}bg-danger bg-opacity-10
+                            {% elif category.name == 'Торговцы' %}bg-warning bg-opacity-10
+                            {% elif category.name == 'Гилдмастеры' %}bg-info bg-opacity-10
+                            {% elif category.name == 'Квестгиверы' %}bg-dark bg-opacity-10
+                            {% elif category.name == 'Кузнецы' %}bg-secondary bg-opacity-10
+                            {% elif category.name == 'Кожевники' %}bg-primary bg-opacity-10
+                            {% elif category.name == 'Зельевары' %}bg-success bg-opacity-10
+                            {% elif category.name == 'Мастера заклинаний' %}bg-danger bg-opacity-10
+                            {% else %}bg-light{% endif %}">
+                            <i class="fas fa-{% cycle 'shield-alt' 'heartbeat' 'fist-raised' 'coins' 'crown' 'map' 'hammer' 'gem' 'flask' 'magic' %} fa-2x
+                                {% if category.name == 'Танки' %}text-primary
+                                {% elif category.name == 'Хилы' %}text-success
+                                {% elif category.name == 'ДД' %}text-danger
+                                {% elif category.name == 'Торговцы' %}text-warning
+                                {% elif category.name == 'Гилдмастеры' %}text-info
+                                {% elif category.name == 'Квестгиверы' %}text-dark
+                                {% elif category.name == 'Кузнецы' %}text-secondary
+                                {% elif category.name == 'Кожевники' %}text-primary
+                                {% elif category.name == 'Зельевары' %}text-success
+                                {% elif category.name == 'Мастера заклинаний' %}text-danger
+                                {% else %}text-secondary{% endif %}"></i>
+                        </div>
+                        <h5 class="fw-bold mb-1">{{ category.name }}</h5>
+                        <small class="text-muted">
+                            {{ category.ad_set.count }} объявлений
+                        </small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <h2 class="fw-bold mb-4">
+            <i class="fas fa-play-circle text-success me-2"></i>Как это работает
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                            1
+                        </div>
+                        <h4 class="card-title mb-3">Создайте профиль</h4>
+                        <p class="card-text text-muted">
+                            Зарегистрируйтесь и расскажите о себе.
+                            Укажите ваш игровой опыт, классы и предпочтения.
+                        </p>
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary mt-2">
+                            Зарегистрироваться
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                            2
+                        </div>
+                        <h4 class="card-title mb-3">Найдите команду</h4>
+                        <p class="card-text text-muted">
+                            Ищите игроков для рейдов, PvP или гильдии.
+                            Используйте фильтры по категориям и классам.
+                        </p>
+                        <a href="{% url 'ad_list' %}" class="btn btn-outline-success mt-2">
+                            Найти команду
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                            3
+                        </div>
+                        <h4 class="card-title mb-3">Начните общаться</h4>
+                        <p class="card-text text-muted">
+                            Оставляйте отклики на понравившиеся объявления.
+                            Общайтесь с другими игроками и создавайте команды.
+                        </p>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'ad_create' %}" class="btn btn-outline-warning mt-2">
+                            Создать объявление
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <h2 class="fw-bold mb-4">
+            <i class="fas fa-star text-warning me-2"></i>Отзывы игроков
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/50?img=11"
+                                 class="rounded-circle me-3 border border-2 border-primary"
+                                 alt="Игрок">
+                            <div>
+                                <h6 class="mb-0">Александр</h6>
+                                <small class="text-muted">Танк</small>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            "Нашел отличную рейдовую группу за 2 дня!
+                            Ребята оказались опытными и дружелюбными."
+                        </p>
+                        <div class="text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/50?img=22"
+                                 class="rounded-circle me-3 border border-2 border-success"
+                                 alt="Игрок">
+                            <div>
+                                <h6 class="mb-0">Мария</h6>
+                                <small class="text-muted">Хил</small>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            "Продала редкий предмет за хорошую цену.
+                            Все сделки безопасные, модераторы следят за порядком."
+                        </p>
+                        <div class="text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/50?img=33"
+                                 class="rounded-circle me-3 border border-2 border-danger"
+                                 alt="Игрок">
+                            <div>
+                                <h6 class="mb-0">Дмитрий</h6>
+                                <small class="text-muted">ДД</small>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            "Присоединился к гильдии, теперь играю с постоянной командой.
+                            Сайт реально помогает находить единомышленников."
+                        </p>
+                        <div class="text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .category-card:hover .card {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .stat-card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .icon-wrapper {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .step-number {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+
+    .avatar-group {
+        display: flex;
+    }
+
+    .avatar-group img {
+        width: 40px;
+        height: 40px;
+        margin-left: -15px;
+        border: 3px solid #fff;
+    }
+
+    .avatar-group img:first-child {
+        margin-left: 0;
+    }
+
+    .avatar-count {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-left: 10px;
+    }
+
+    .card-img-wrapper:hover img {
+        transform: scale(1.05);
+    }
+
+    .stretched-link::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        content: "";
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.display-6');
+
+        counters.forEach(counter => {
+            const target = parseInt(counter.textContent.replace(',', ''));
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                counter.textContent = Math.floor(current).toLocaleString();
+            }, 20);
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

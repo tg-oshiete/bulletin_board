@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-bullhorn"></i> Все объявления</h1>
+        <a href="{% url 'ad_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Создать объявление
+        </a>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-filter"></i> Фильтр по категориям</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="?" class="btn btn-outline-secondary {% if not request.GET.category %}active{% endif %}">
+                    Все
+                </a>
+                {% for category in categories %}
+                <a href="?category={{ category.name }}"
+                   class="btn btn-outline-primary {% if request.GET.category == category.name %}active{% endif %}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if ads %}
+    <div class="row">
+        {% for ad in ads %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if ad.image %}
+                <img src="{{ ad.image.url }}"
+                     class="card-img-top"
+                     alt="{{ ad.title }}"
+                     style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center"
+                     style="height: 200px;">
+                    <i class="fas fa-image fa-3x text-light opacity-50"></i>
+                </div>
+                {% endif %}
+                <div class="card-header bg-transparent">
+                    <span class="badge bg-primary">
+                        {{ ad.category.name }}
+                    </span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <a href="{{ ad.get_absolute_url }}" class="text-decoration-none text-dark">
+                            {{ ad.title }}
+                        </a>
+                    </h5>
+
+                    <p class="card-text flex-grow-1">
+                        {{ ad.content|truncatewords:30 }}
+                    </p>
+                    {% if ad.file %}
+                    <div class="mb-2">
+                        <span class="badge bg-info">
+                            <i class="fas fa-paperclip"></i> Есть файл
+                        </span>
+                    </div>
+                    {% endif %}
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">
+                                    <i class="fas fa-user"></i> {{ ad.author.username }}
+                                </small>
+                            </div>
+                            <div>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ ad.created|date:"d.m.Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ ad.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> Подробнее
+                        </a>
+                        <span class="text-muted">
+                            <i class="fas fa-comment"></i> {{ ad.response_set.count|default:0 }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if is_paginated %}
+    <div class="pagination mt-4">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-sm btn-outline-secondary">Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">← Назад</a>
+        {% endif %}
+
+        <span class="mx-3">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-secondary">Вперед →</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-secondary">Последняя</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <div class="empty-state">
+            <i class="fas fa-bullhorn fa-4x text-muted mb-4"></i>
+            <h3>Объявлений пока нет</h3>
+            <p class="text-muted mb-4">Будьте первым, кто создаст объявление!</p>
+            <a href="{% url 'ad_create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle"></i> Создать первое объявление
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .card-img-top {
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge {
+        font-size: 0.8em;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock %}

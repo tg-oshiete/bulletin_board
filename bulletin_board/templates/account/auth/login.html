@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход - MMORPG Форум{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <i class="fas fa-sign-in-alt fa-3x mb-3"></i>
+                    <h1 class="h3 mb-0">С возвращением!</h1>
+                    <p class="mb-0 opacity-75">Войдите в свой аккаунт</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <div class="mb-4">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-user me-2"></i>Имя пользователя или Email
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.username.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-lock me-2"></i>Пароль
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.password.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe" name="remember_me">
+                                <label class="form-check-label small" for="rememberMe">
+                                    Запомнить меня
+                                </label>
+                            </div>
+                            <div>
+                                <a href="{% url 'password_reset' %}" class="small text-decoration-none">
+                                    Забыли пароль?
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Войти
+                            </button>
+                        </div>
+
+                        <div class="position-relative text-center mb-4">
+                            <hr>
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">
+                                или
+                            </span>
+                        </div>
+
+                        <div class="text-center mb-4">
+                            <p class="text-muted">Войдите через:</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <button type="button" class="btn btn-outline-dark">
+                                    <i class="fab fa-google"></i> Google
+                                </button>
+                                <button type="button" class="btn btn-outline-primary">
+                                    <i class="fab fa-discord"></i> Discord
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="mb-0">
+                                Нет аккаунта?
+                                <a href="{% url 'register' %}" class="text-decoration-none fw-bold">
+                                    Зарегистрируйтесь
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4 border-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Впервые у нас?</h5>
+                    <p class="card-text small text-muted mb-3">
+                        Присоединяйтесь к сообществу MMORPG игроков
+                    </p>
+                    <a href="{% url 'register' %}" class="btn btn-outline-info">
+                        <i class="fas fa-user-plus me-2"></i>Создать аккаунт
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-5 mt-4 mt-md-0">
+            <div class="card bg-light border-0 h-100">
+                <div class="card-body p-4">
+                    <h3 class="h4 mb-4">
+                        <i class="fas fa-gamepad me-2 text-primary"></i>
+                        Почему стоит присоединиться?
+                    </h3>
+
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-check text-success fa-lg me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="h6 fw-bold">Найдите команду</h5>
+                                    <p class="small text-muted mb-0">
+                                        Ищете рейдовую группу или гильдию? Мы поможем!
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-check text-success fa-lg me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="h6 fw-bold">Торгуйте предметами</h5>
+                                    <p class="small text-muted mb-0">
+                                        Продавайте и покупайте игровые предметы безопасно
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-check text-success fa-lg me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="h6 fw-bold">Общайтесь</h5>
+                                    <p class="small text-muted mb-0">
+                                        Обсуждайте стратегии и делитесь опытом
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="d-flex">
+                                <i class="fas fa-check text-success fa-lg me-3 mt-1"></i>
+                                <div>
+                                    <h5 class="h6 fw-bold">Будьте в курсе</h5>
+                                    <p class="small text-muted mb-0">
+                                        Узнавайте первыми о событиях и обновлениях
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <small class="text-muted d-block mb-2">Уже присоединились:</small>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="avatar-group me-3">
+                                <img src="https://i.pravatar.cc/30?img=1" class="rounded-circle border" alt="...">
+                                <img src="https://i.pravatar.cc/30?img=2" class="rounded-circle border" alt="...">
+                                <img src="https://i.pravatar.cc/30?img=3" class="rounded-circle border" alt="...">
+                                <span class="avatar-count">+1.2K</span>
+                            </div>
+                            <div>
+                                <span class="fw-bold text-primary">1,247</span> игроков
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    .avatar-group {
+        display: flex;
+    }
+
+    .avatar-group img {
+        width: 30px;
+        height: 30px;
+        margin-left: -10px;
+        border: 2px solid white;
+    }
+
+    .avatar-group img:first-child {
+        margin-left: 0;
+    }
+
+    .avatar-count {
+        margin-left: 5px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameField = document.getElementById('id_username');
+        if (usernameField) {
+            usernameField.focus();
+        }
+
+        {% if form.errors %}
+            {% for field in form %}
+                {% if field.errors %}
+                    document.getElementById('id_{{ field.name }}').classList.add('is-invalid');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        const rememberCheckbox = document.getElementById('rememberMe');
+        const usernameInput = document.getElementById('id_username');
+
+        const savedUsername = localStorage.getItem('rememberedUsername');
+        if (savedUsername && usernameInput) {
+            usernameInput.value = savedUsername;
+            rememberCheckbox.checked = true;
+        }
+
+        rememberCheckbox.addEventListener('change', function() {
+            if (this.checked && usernameInput.value) {
+                localStorage.setItem('rememberedUsername', usernameInput.value);
+            } else {
+                localStorage.removeItem('rememberedUsername');
+            }
+        });
+    });
+</script>
+{% endblock %}

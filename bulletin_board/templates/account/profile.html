@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мой профиль - MMORPG Форум{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'ad_list' %}">Главная</a></li>
+            <li class="breadcrumb-item active">Мой профиль</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center p-4">
+                    <div class="position-relative mb-3">
+                        <img src="{{ profile.get_avatar_url }}"
+                             alt="{{ user.username }}"
+                             class="rounded-circle border border-4 border-primary"
+                             width="150" height="150"
+                             style="object-fit: cover;">
+                        <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-2 border border-2 border-white"
+                              title="Онлайн">
+                        </span>
+                    </div>
+
+                    <h2 class="h4 mb-1">
+                        {% if user.get_full_name %}
+                            {{ user.get_full_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </h2>
+                    <p class="text-muted mb-3">@{{ user.username }}</p>
+
+                    <div class="row mb-4">
+                        <div class="col-4">
+                            <div class="border rounded py-2">
+                                <h3 class="h5 mb-0 text-primary">{{ profile.total_ads }}</h3>
+                                <small class="text-muted">Объявления</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded py-2">
+                                <h3 class="h5 mb-0 text-success">{{ profile.total_responses }}</h3>
+                                <small class="text-muted">Отклики</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded py-2">
+                                <h3 class="h5 mb-0 text-info">0</h3>
+                                <small class="text-muted">Рейтинг</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'profile_edit' %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Редактировать профиль
+                        </a>
+                        <a href="{% url 'ad_create' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus-circle me-2"></i>Создать объявление
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Контактная информация</h6>
+                    <ul class="list-unstyled mb-0">
+                        {% if user.email %}
+                        <li class="mb-2">
+                            <i class="fas fa-envelope text-muted me-2"></i>
+                            {{ user.email }}
+                        </li>
+                        {% endif %}
+
+                        {% if profile.phone %}
+                        <li class="mb-2">
+                            <i class="fas fa-phone text-muted me-2"></i>
+                            {{ profile.phone }}
+                        </li>
+                        {% endif %}
+
+                        {% if profile.location %}
+                        <li class="mb-2">
+                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                            {{ profile.location }}
+                        </li>
+                        {% endif %}
+
+                        {% if profile.website %}
+                        <li>
+                            <i class="fas fa-globe text-muted me-2"></i>
+                            <a href="{{ profile.website }}" target="_blank">Веб-сайт</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0"><i class="fas fa-gamepad me-2"></i>Игровые аккаунты</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% if profile.discord %}
+                        <li class="mb-2">
+                            <i class="fab fa-discord text-primary me-2"></i>
+                            {{ profile.discord }}
+                        </li>
+                        {% endif %}
+
+                        {% if profile.steam %}
+                        <li>
+                            <i class="fab fa-steam text-dark me-2"></i>
+                            {{ profile.steam }}
+                        </li>
+                        {% endif %}
+
+                        {% if not profile.discord and not profile.steam %}
+                        <li class="text-muted">
+                            <small>Игровые аккаунты не указаны</small>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <ul class="nav nav-tabs mb-4" id="profileTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button">
+                        <i class="fas fa-user me-2"></i>О себе
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ads-tab" data-bs-toggle="tab" data-bs-target="#ads" type="button">
+                        <i class="fas fa-bullhorn me-2"></i>Мои объявления
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button">
+                        <i class="fas fa-comments me-2"></i>Мои отклики
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button">
+                        <i class="fas fa-history me-2"></i>Активность
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="profileTabContent">
+                <div class="tab-pane fade show active" id="about" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            {% if profile.bio %}
+                                <div class="mb-4">
+                                    <h5 class="card-title">О себе</h5>
+                                    <p class="card-text">{{ profile.bio|linebreaks }}</p>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-user-circle fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Расскажите о себе в настройках профиля</p>
+                                </div>
+                            {% endif %}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold mb-3">Информация</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-user-plus text-muted me-2"></i>
+                                            <strong>Дата регистрации:</strong><br>
+                                            {{ user.date_joined|date:"d.m.Y" }}
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-calendar-alt text-muted me-2"></i>
+                                            <strong>Дата рождения:</strong><br>
+                                            {% if profile.birth_date %}
+                                                {{ profile.birth_date|date:"d.m.Y" }}
+                                            {% else %}
+                                                Не указана
+                                            {% endif %}
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-clock text-muted me-2"></i>
+                                            <strong>Последняя активность:</strong><br>
+                                            {{ profile.last_activity|date:"d.m.Y H:i" }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold mb-3">Настройки</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-bell text-muted me-2"></i>
+                                            <strong>Уведомления:</strong>
+                                            {% if profile.email_notifications %}
+                                                <span class="badge bg-success">Включены</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Выключены</span>
+                                            {% endif %}
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-eye text-muted me-2"></i>
+                                            <strong>Статус онлайн:</strong>
+                                            {% if profile.show_online_status %}
+                                                <span class="badge bg-success">Виден</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Скрыт</span>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="ads" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="card-title mb-0">Мои объявления</h5>
+                                <a href="{% url 'ad_create' %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Создать новое
+                                </a>
+                            </div>
+
+                            {% if user_ads %}
+                                <div class="list-group list-group-flush">
+                                    {% for ad in user_ads %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <a href="{% url 'ad_detail' ad.pk %}" class="text-decoration-none">
+                                                        {{ ad.title }}
+                                                    </a>
+                                                    {% if not ad.is_active %}
+                                                        <span class="badge bg-danger">Не активно</span>
+                                                    {% endif %}
+                                                </h6>
+                                                <small class="text-muted">
+                                                    {{ ad.created|date:"d.m.Y H:i" }} |
+                                                    {{ ad.category.name }} |
+                                                    Откликов: {{ ad.response_set.count }}
+                                                </small>
+                                            </div>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{% url 'ad_update' ad.pk %}" class="btn btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'ad_delete' ad.pk %}" class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="?tab=ads" class="btn btn-outline-primary">
+                                        <i class="fas fa-list me-2"></i>Показать все объявления
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">У вас пока нет объявлений</p>
+                                    <a href="{% url 'ad_create' %}" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Создать первое объявление
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="responses" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Мои отклики</h5>
+
+                            {% if user_responses %}
+                                <div class="list-group list-group-flush">
+                                    {% for response in user_responses %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <a href="{% url 'ad_detail' response.ad.pk %}" class="text-decoration-none">
+                                                        {{ response.ad.title }}
+                                                    </a>
+                                                </h6>
+                                                <p class="mb-1 small">{{ response.text|truncatechars:150 }}</p>
+                                                <small class="text-muted">
+                                                    {{ response.created_at|date:"d.m.Y H:i" }} |
+                                                    Статус:
+                                                    {% if response.is_accepted %}
+                                                        <span class="text-success">Принят</span>
+                                                    {% else %}
+                                                        <span class="text-warning">Ожидает</span>
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted d-block text-end">
+                                                    Автор: {{ response.ad.author.username }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Вы еще не оставляли отклики</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="activity" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Последняя активность</h5>
+
+                            {% if recent_activity %}
+                                <div class="timeline">
+                                    {% for activity in recent_activity %}
+                                    <div class="timeline-item mb-4">
+                                        <div class="timeline-badge
+                                            {% if activity.type == 'ad' %}bg-primary
+                                            {% elif activity.type == 'response' %}bg-success
+                                            {% else %}bg-info{% endif %}">
+                                            <i class="fas fa-{% if activity.type == 'ad' %}bullhorn{% else %}comment{% endif %}"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="d-flex justify-content-between">
+                                                <h6 class="mb-1">{{ activity.message }}</h6>
+                                                <small class="text-muted">{{ activity.time|timesince }} назад</small>
+                                            </div>
+                                            {% if activity.type == 'ad' %}
+                                                <a href="{% url 'ad_detail' activity.object.pk %}" class="small">
+                                                    Перейти к объявлению →
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'ad_detail' activity.object.ad.pk %}" class="small">
+                                                    Перейти к объявлению →
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Активность отсутствует</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card border-primary border-2">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
+                            <h5 class="card-title">Статистика</h5>
+                            <p class="card-text small text-muted">
+                                Просмотр вашей статистики и достижений
+                            </p>
+                            <a href="#" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border-success border-2">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cog fa-2x text-success mb-3"></i>
+                            <h5 class="card-title">Настройки</h5>
+                            <p class="card-text small text-muted">
+                                Управление настройками профиля и уведомлениями
+                            </p>
+                            <a href="{% url 'profile_edit' %}" class="btn btn-outline-success btn-sm">Настроить</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .nav-tabs .nav-link {
+        border-radius: 8px 8px 0 0;
+        font-weight: 500;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #f8f9fa;
+        border-bottom-color: #f8f9fa;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+
+    .timeline-item {
+        position: relative;
+    }
+
+    .timeline-badge {
+        position: absolute;
+        left: -30px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .timeline-content {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .border-primary {
+        border-color: #0d6efd !important;
+    }
+
+    .border-success {
+        border-color: #198754 !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileTab = localStorage.getItem('profileTab');
+        if (profileTab) {
+            const tab = new bootstrap.Tab(document.getElementById(profileTab + '-tab'));
+            tab.show();
+        }
+
+        document.querySelectorAll('#profileTab button').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.id.replace('-tab', '');
+                localStorage.setItem('profileTab', tabId);
+            });
+        });
+
+        const avatarInput = document.querySelector('input[name="avatar"]');
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function(e) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatarImg = document.querySelector('.rounded-circle');
+                    if (avatarImg) {
+                        avatarImg.src = event.target.result;
+                    }
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            });
+        }
+    });
+</script>
+{% endblock %}

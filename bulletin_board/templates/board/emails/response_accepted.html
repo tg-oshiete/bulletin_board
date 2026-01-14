@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отклик принят</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #28a745; color: white; padding: 20px; text-align: center; }
+        .content { background-color: #f9f9f9; padding: 20px; border-radius: 5px; }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+        .ad-info { background-color: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 5px; margin: 15px 0; }
+        .author-info { background-color: #e8f4fd; padding: 15px; border-left: 4px solid #4a6fa5; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ваш отклик принят!</h1>
+        </div>
+
+        <div class="content">
+            <p>Поздравляем, {{ responder.username }}!</p>
+
+            <div class="ad-info">
+                <h3>Объявление: {{ ad.title }}</h3>
+                <p>Категория: {{ ad.category.name }}</p>
+            </div>
+
+            <div class="author-info">
+                <h3>Автор объявления: {{ author.username }}</h3>
+                <p>Вы можете связаться с автором для обсуждения деталей:</p>
+                <p>Email автора: {{ author.email }}</p>
+            </div>
+
+            <p>Текст вашего отклика:</p>
+            <blockquote style="background-color: #f0f0f0; padding: 10px; border-left: 3px solid #ccc; margin: 10px 0;">
+                {{ response.text }}
+            </blockquote>
+
+            <p>Просмотреть объявление:</p>
+            <a href="{{ site_url }}/bulletin-board/{{ ad.id }}/" class="button">Перейти к объявлению</a>
+        </div>
+
+        <div class="footer">
+            <p>Это автоматическое сообщение от {{ site_name }}.</p>
+        </div>
+    </div>
+</body>
+</html>

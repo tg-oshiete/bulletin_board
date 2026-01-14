@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ ad.title }} - MMORPG Форум{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'ad_list' %}">Все объявления</a></li>
+            <li class="breadcrumb-item"><a href="?category={{ ad.category.name }}">{{ ad.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ ad.title|truncatechars:50 }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h4 mb-0"><i class="fas fa-bullhorn"></i> {{ ad.title }}</h1>
+                    <div class="mt-2">
+                        <span class="badge bg-light text-dark">{{ ad.category.name }}</span>
+                        {% if not ad.is_active %}
+                            <span class="badge bg-danger">Не активно</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-end">
+                    <small class="d-block">
+                        <i class="fas fa-user"></i> {{ ad.author.username }}
+                    </small>
+                    <small class="d-block">
+                        <i class="fas fa-clock"></i> {{ ad.created|date:"d.m.Y H:i" }}
+                    </small>
+                    {% if ad.created != ad.update %}
+                        <small class="d-block text-warning">
+                            <i class="fas fa-edit"></i> Изменено: {{ ad.update|date:"d.m.Y H:i" }}
+                        </small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            {% if ad.image %}
+                <div class="text-center mb-4">
+                    <img src="{{ ad.image.url }}"
+                         alt="{{ ad.title }}"
+                         class="img-fluid rounded"
+                         style="max-height: 500px; object-fit: contain;">
+                    <p class="text-muted mt-2"><small>Изображение объявления</small></p>
+                </div>
+            {% endif %}
+            <div class="content mb-4">
+                <h3 class="h5 mb-3">Описание:</h3>
+                <div class="p-3 bg-light rounded">
+                    {{ ad.content|linebreaks }}
+                </div>
+            </div>
+            {% if ad.file %}
+                <div class="file-download mb-4">
+                    <h3 class="h5 mb-3">Прикрепленный файл:</h3>
+                    <div class="p-3 bg-light rounded">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-paperclip fa-2x me-3 text-primary"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ ad.file.name|slice:"12:" }}</strong>
+                                <div class="text-muted">
+                                    <small>
+                                        <i class="fas fa-download"></i>
+                                        {{ ad.file.size|filesizeformat }}
+                                    </small>
+                                </div>
+                            </div>
+                            <a href="{{ ad.file.url }}"
+                               download
+                               class="btn btn-primary">
+                                <i class="fas fa-download"></i> Скачать
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{% url 'ad_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к списку
+                    </a>
+                </div>
+
+                {% if user.is_authenticated and user == ad.author %}
+                    <div>
+                        <a href="{% url 'ad_update' ad.pk %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Редактировать
+                        </a>
+                        <a href="{% url 'ad_delete' ad.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Удалить
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="mb-4">
+            <i class="fas fa-comments"></i> Отклики
+            <span class="badge bg-primary">{{ responses|length }}</span>
+        </h3>
+
+        {% if user.is_authenticated %}
+            {% if user != ad.author %}
+                {% if not user_has_response %}
+                    <div class="card mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="h6 mb-0"><i class="fas fa-reply"></i> Оставить отклик</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="{% url 'send_response' ad.pk %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="responseText" class="form-label">Ваш отклик:</label>
+                                    <textarea class="form-control"
+                                              id="responseText"
+                                              name="text"
+                                              rows="4"
+                                              required
+                                              placeholder="Напишите ваш отклик на это объявление..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-paper-plane"></i> Отправить отклик
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-check-circle"></i> Вы уже оставили отклик на это объявление.
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i> Вы не можете оставлять отклики на свои собственные объявления.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-sign-in-alt"></i>
+                <a href="{% url 'login' %}?next={{ request.path }}" class="alert-link">Войдите</a>
+                в систему, чтобы оставлять отклики.
+            </div>
+        {% endif %}
+
+        {% if responses %}
+            <div class="list-group">
+                {% for response in responses %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <div class="mb-1">
+                                <strong>{{ response.from_user.username }}</strong>
+                                <p class="mb-1">{{ response.text|linebreaks }}</p>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">{{ response.created_at|date:"d.m.Y H:i" }}</small>
+                                <br>
+                                {% if response.is_accepted %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Принят
+                                    </span>
+                                {% endif %}
+
+                                {% if user == ad.author %}
+                                    <div class="mt-2">
+                                        {% if not response.is_accepted %}
+                                            <a href="{% url 'accept_response' response.pk %}"
+                                               class="btn btn-sm btn-success">
+                                                <i class="fas fa-check"></i> Принять
+                                            </a>
+                                        {% endif %}
+                                        <a href="{% url 'delete_response' response.pk %}"
+                                           class="btn btn-sm btn-danger">
+                                            <i class="fas fa-times"></i> Удалить
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">
+                <i class="fas fa-info-circle"></i> Пока нет откликов на это объявление.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-5">
+        <h3 class="mb-4"><i class="fas fa-random"></i> Похожие объявления</h3>
+        <div class="row">
+            {% for similar_ad in ad.category.ad_set.all|slice:":3" %}
+                {% if similar_ad.id != ad.id %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            {% if similar_ad.image %}
+                                <img src="{{ similar_ad.image.url }}"
+                                     class="card-img-top"
+                                     alt="{{ similar_ad.title }}"
+                                     style="height: 150px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% url 'ad_detail' similar_ad.pk %}"
+                                       class="text-decoration-none">
+                                        {{ similar_ad.title|truncatechars:50 }}
+                                    </a>
+                                </h5>
+                                <p class="card-text small">
+                                    {{ similar_ad.content|truncatechars:100 }}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">
+                                    {{ similar_ad.created|date:"d.m.Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">Нет похожих объявлений</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+
+    .card {
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .list-group-item .bg-success {
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.btn-danger[href*="delete"]');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('Вы уверены, что хотите удалить этот отклик?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        const acceptButtons = document.querySelectorAll('.btn-success[href*="accept"]');
+        acceptButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('Принять этот отклик?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

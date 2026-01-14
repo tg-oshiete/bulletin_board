@@ -1,10 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-
-# class Profile(models.Model): # должен наследоваться от стандартного user
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     email_confirmed = models.BooleanField(default=False)
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -14,11 +10,11 @@ class Category(models.Model):
         return self.name
 
 
-class Advertisement(models.Model):
+class Ad(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     image = models.ImageField(upload_to='ads_images/', blank=True, null=True)
-    file = models.FileField(upload_to='ads_files/', blank=True, null=True) # сделать WYSIWYG-полем
+    file = models.FileField(upload_to='ads_files/', blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -28,6 +24,9 @@ class Advertisement(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("ad_detail", kwargs={"pk": self.pk})
+
     class Meta:
         ordering = ['-created']
 
@@ -35,7 +34,7 @@ class Advertisement(models.Model):
 class Response(models.Model):
     text = models.TextField()
     from_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ad = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
     is_accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

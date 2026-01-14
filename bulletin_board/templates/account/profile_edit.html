@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактировать профиль - MMORPG Форум{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'profile' %}">Мой профиль</a></li>
+            <li class="breadcrumb-item active">Редактирование</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0"><i class="fas fa-user-edit me-2"></i>Редактировать профиль</h1>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">Основная информация</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Аватар</label>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <img src="{{ user.profile.get_avatar_url }}"
+                                                 alt="Аватар"
+                                                 class="rounded-circle"
+                                                 width="80" height="80"
+                                                 id="avatarPreview">
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            {{ profile_form.avatar }}
+                                            <div class="form-text">
+                                                Рекомендуемый размер: 300x300px
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ user_form.first_name.id_for_label }}" class="form-label">
+                                        {{ user_form.first_name.label }}
+                                    </label>
+                                    {{ user_form.first_name }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ user_form.last_name.id_for_label }}" class="form-label">
+                                        {{ user_form.last_name.label }}
+                                    </label>
+                                    {{ user_form.last_name }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ user_form.email.id_for_label }}" class="form-label">
+                                        {{ user_form.email.label }}
+                                    </label>
+                                    {{ user_form.email }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">Контактная информация</h5>
+
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.phone.id_for_label }}" class="form-label">
+                                        {{ profile_form.phone.label }}
+                                    </label>
+                                    {{ profile_form.phone }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.birth_date.id_for_label }}" class="form-label">
+                                        {{ profile_form.birth_date.label }}
+                                    </label>
+                                    {{ profile_form.birth_date }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.location.id_for_label }}" class="form-label">
+                                        {{ profile_form.location.label }}
+                                    </label>
+                                    {{ profile_form.location }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.website.id_for_label }}" class="form-label">
+                                        {{ profile_form.website.label }}
+                                    </label>
+                                    {{ profile_form.website }}
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">О себе</h5>
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.bio.id_for_label }}" class="form-label">
+                                        {{ profile_form.bio.label }}
+                                    </label>
+                                    {{ profile_form.bio }}
+                                    <div class="form-text">
+                                        Расскажите о своих интересах, игровых предпочтениях, опыте
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">Игровые аккаунты</h5>
+
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.discord.id_for_label }}" class="form-label">
+                                        {{ profile_form.discord.label }}
+                                    </label>
+                                    {{ profile_form.discord }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ profile_form.steam.id_for_label }}" class="form-label">
+                                        {{ profile_form.steam.label }}
+                                    </label>
+                                    {{ profile_form.steam }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">Настройки</h5>
+
+                                <div class="form-check mb-3">
+                                    {{ profile_form.email_notifications }}
+                                    <label for="{{ profile_form.email_notifications.id_for_label }}" class="form-check-label">
+                                        {{ profile_form.email_notifications.label }}
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    {{ profile_form.show_online_status }}
+                                    <label for="{{ profile_form.show_online_status.id_for_label }}" class="form-check-label">
+                                        {{ profile_form.show_online_status.label }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const avatarInput = document.querySelector('#id_avatar');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
